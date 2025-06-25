@@ -10,3 +10,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: echo "Triggered!"
+      - name: Add PR comment
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
+          COMMENT_BODY="👋 This is a GitHub Action comment!"
+          curl -s -H "Authorization: token $GITHUB_TOKEN" \
+               -H "Content-Type: application/json" \
+               -d "{\"body\": \"$COMMENT_BODY\"}" \
+               "https://api.github.com/repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments"
