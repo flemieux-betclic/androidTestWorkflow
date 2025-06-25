@@ -10,13 +10,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: echo "Triggered!"
-      - name: Add PR comment
+      - name: Comment on the PR
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.issue.number }}
         run: |
-          PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
           COMMENT_BODY="👋 This is a GitHub Action comment!"
-          curl -s -H "Authorization: token $GITHUB_TOKEN" \
+          API_URL="https://api.github.com/repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments"
+      
+          echo "🔍 Will POST to: $API_URL"
+          echo "📦 Payload: {\"body\": \"${COMMENT_BODY}\"}"
+      
+          curl -s -H "Authorization: token ${GITHUB_TOKEN}" \
                -H "Content-Type: application/json" \
-               -d "{\"body\": \"$COMMENT_BODY\"}" \
-               "https://api.github.com/repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments"
+               -d "{\"body\": \"${COMMENT_BODY}\"}" \
+               "$API_URL"
+
