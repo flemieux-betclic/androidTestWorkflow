@@ -4,14 +4,13 @@ on:
   issue_comment:
     types: [created, edited]
 
-permissions:
-  contents: read
-  issues: write  # Needed to comment on issues/PRs
-
 jobs:
   your_job:
     if: github.event.issue.pull_request != null && startsWith(github.event.comment.body, 'upload')
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write  # ✅ This gives write access to comment on issues/PRs
     steps:
       - run: echo "Triggered!"
       - name: Comment on the PR
