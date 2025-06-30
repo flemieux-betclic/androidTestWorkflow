@@ -4,6 +4,10 @@ on:
   issue_comment:
     types: [created, edited]
 
+permissions:
+  contents: read
+  issues: write  # Needed to comment on issues/PRs
+
 jobs:
   your_job:
     if: github.event.issue.pull_request != null && startsWith(github.event.comment.body, 'upload')
